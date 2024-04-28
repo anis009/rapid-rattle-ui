@@ -26,11 +26,14 @@ const WebViewScreen = ({ route }) => {
   return (
     <View style={{ flex: 1 }}>
       <CustomHeader onClose={handleClose} />
-      {loading && <Loading />}
+      {/* {loading && <Loading />} */}
       <WebView
         source={{ uri: url }}
         onLoad={handleLoadEnd}
         onLoadStart={handleLoadStart}
+        style={{
+          zIndex: 1,
+        }}
       />
     </View>
   );

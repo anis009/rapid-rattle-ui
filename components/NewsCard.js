@@ -14,10 +14,13 @@ import { useTheme } from '../contexts/theme-context';
 import { IMG_URL } from '../constants/baseUrl';
 import { Colors } from '../constants/colors';
 import { useNavigation } from '@react-navigation/native';
+import ImageModal from './ImageModal';
 
 const NewsCard = ({ item }) => {
   const { isDarkMode } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [visible, setIsVisible] = useState(false);
 
   navigation = useNavigation();
 
@@ -40,28 +43,25 @@ const NewsCard = ({ item }) => {
     }, 2000);
   };
 
+  const pressHandler = (url) => {
+    setImageUrl(url);
+    setIsVisible(true);
+  };
+
   return (
-    <ScrollView
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          colors={['#9Bd35A', '#689F38']}
-          progressBackgroundColor="#ffffff"
+    <ScrollView style={styles.card}>
+      <TouchableOpacity onPress={() => pressHandler(IMG_URL + item.image_hd)}>
+        <Image
+          source={{ uri: IMG_URL + item.image_hd }}
+          style={{
+            width: Dimensions.get('screen').width * 0.98,
+            height: 250,
+            objectFit: 'fill',
+            borderRadius: 20,
+            alignSelf: 'center',
+          }}
         />
-      }
-      style={styles.card}
-    >
-      <Image
-        source={{ uri: IMG_URL + item.image_hd }}
-        style={{
-          width: Dimensions.get('screen').width * 0.98,
-          height: 250,
-          objectFit: 'fill',
-          borderRadius: 20,
-          alignSelf: 'center',
-        }}
-      />
+      </TouchableOpacity>
 
       <Text
         numberOfLines={2}
@@ -136,6 +136,11 @@ const NewsCard = ({ item }) => {
           Read more at {item?.source_name}
         </Text>
       </TouchableOpacity>
+      <ImageModal
+        onClose={() => setIsVisible(false)}
+        imageUrl={imageUrl}
+        isVisible={visible}
+      />
     </ScrollView>
   );
 };

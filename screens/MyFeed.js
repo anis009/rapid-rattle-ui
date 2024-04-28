@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { TabContext } from '../contexts/tab-context';
 import { NewsServices } from '../services/newsServices';
 import {
@@ -30,6 +30,8 @@ const MyFeed = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const { isDarkMode } = useTheme();
+  const scrollViewRef = useRef(null);
+  const [isScrollingUp, setIsScrollingUp] = useState(false);
   useEffect(() => {
     setTabNumber(3);
   }, []);
@@ -52,16 +54,6 @@ const MyFeed = ({ navigation }) => {
     fetchDataFromApi();
   }, [page]);
 
-  const onRefresh = () => {
-    setRefreshing(true);
-    console.log('anis molla');
-    // Simulate fetching new data
-    setTimeout(() => {
-      // setData([...data, new Date().toISOString()]);
-      setRefreshing(false);
-    }, 2000);
-  };
-
   if (loading) {
     return <Loading text="News fetching..." />;
   }
@@ -78,11 +70,47 @@ const MyFeed = ({ navigation }) => {
     }
   };
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    console.log('anis molla');
+    // Simulate fetching new data
+    setTimeout(() => {
+      // setData([...data, new Date().toISOString()]);
+      setRefreshing(false);
+    }, 2000);
+  };
+
+  // Scroll listener to detect scroll direction
+  const handleScroll = (event) => {
+    // const currentOffset = event.nativeEvent.contentOffset.y;
+    // setIsScrollingUp(
+    //   currentOffset > 0 && currentOffset < event.nativeEvent.contentSize.height,
+    // );
+
+    // console.log(currentOffset);
+
+    console.log('anis molla1');
+  };
+
+  const onPageSelected = () => {
+    console.log('onPageSelected');
+  };
+
   // console.log("data~", data);
   console.log('isDarkMode', isDarkMode);
 
   return (
     <PagerView
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={['#9Bd35A', '#689F38']}
+          progressBackgroundColor="#ffffff"
+        />
+      }
+      onPointerUp={onPageSelected}
+      ref={scrollViewRef}
       style={[
         styles.pagerView,
         {
